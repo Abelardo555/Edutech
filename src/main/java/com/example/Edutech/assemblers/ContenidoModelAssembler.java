@@ -5,6 +5,7 @@ import com.example.Edutech.model.Contenido;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.hateoas.server.RepresentationModelAssembler;
 import org.springframework.stereotype.Component;
+import org.springframework.lang.NonNull;
 
 import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 
@@ -12,7 +13,7 @@ import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
 public class ContenidoModelAssembler implements RepresentationModelAssembler<Contenido, EntityModel<Contenido>> {
 
     @Override
-    public EntityModel<Contenido> toModel(Contenido contenido) {
+    public @NonNull EntityModel<Contenido> toModel(@NonNull Contenido contenido) {
         return EntityModel.of(contenido,
                 linkTo(methodOn(ContenidoController.class).obtenerContenido(contenido.getIdcontenido())).withSelfRel(),
                 linkTo(methodOn(ContenidoController.class).listarContenidos()).withRel("contenidos")

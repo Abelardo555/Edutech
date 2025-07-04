@@ -2,6 +2,11 @@ package com.example.Edutech.controller;
 
 import com.example.Edutech.model.Contenido;
 import com.example.Edutech.service.ContenidoService;
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -22,6 +27,33 @@ public class ContenidoController {
         return ResponseEntity.ok(contenidoService.crearContenido(contenido));
     }
 
+    @Operation(
+        summary = "Obtener contenido por ID",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Contenido encontrado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Contenido.class),
+                    examples = @ExampleObject(
+                        value = """
+                        {
+                          "idcontenido": 1,
+                          "titulo": "Introducción a Java",
+                          "descripcion": "Primer módulo del curso Java Básico",
+                          "url": "https://ejemplo.com/java-intro",
+                          "curso": {
+                            "idcurso": 1,
+                            "nombre": "Java Básico"
+                          }
+                        }
+                        """
+                    )
+                )
+            )
+        }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<Contenido> obtenerContenido(@PathVariable Long id) {
         return contenidoService.obtenerContenidoPorId(id)

@@ -3,7 +3,11 @@ package com.example.Edutech.controller;
 import com.example.Edutech.assemblers.UsuarioModelAssembler;
 import com.example.Edutech.model.Usuario;
 import com.example.Edutech.service.UsuarioService;
-
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
+import io.swagger.v3.oas.annotations.media.Content;
+import io.swagger.v3.oas.annotations.media.Schema;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import org.springframework.hateoas.CollectionModel;
 import org.springframework.hateoas.EntityModel;
 import org.springframework.http.ResponseEntity;
@@ -30,6 +34,35 @@ public class UsuarioController {
         return ResponseEntity.ok(usuarioService.crearUsuario(usuario));
     }
 
+    @Operation(
+        summary = "Obtener usuario por ID",
+        responses = {
+            @ApiResponse(
+                responseCode = "200",
+                description = "Usuario encontrado",
+                content = @Content(
+                    mediaType = "application/json",
+                    schema = @Schema(implementation = Usuario.class),
+                    examples = @ExampleObject(
+                        value = """
+                        {
+                          "idusuario": 1,
+                          "nombre": "Juan",
+                          "apellido": "Pérez",
+                          "correo": "juan@correo.com",
+                          "contrasena": "********",
+                          "rol": "ESTUDIANTE",
+                          "_links": {
+                            "self": { "href": "http://localhost:8080/usuarios/1" },
+                            "usuarios": { "href": "http://localhost:8080/usuarios" }
+                          }
+                        }
+                        """
+                    )
+                )
+            )
+        }
+    )
     @GetMapping("/{id}")
     public ResponseEntity<EntityModel<Usuario>> obtenerUsuario(@PathVariable Long id) {
         return usuarioService.obtenerUsuarioPorId(id)
