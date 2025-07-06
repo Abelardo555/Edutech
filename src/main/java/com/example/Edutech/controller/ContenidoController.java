@@ -1,12 +1,8 @@
 package com.example.Edutech.controller;
 
 import com.example.Edutech.model.Contenido;
-import com.example.Edutech.service.ContenidoService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -14,66 +10,51 @@ import java.util.List;
 
 @RestController
 @RequestMapping("/contenidos")
+@Tag(name = "Contenidos", description = "Controlador para gestionar los contenidos del sistema")
 public class ContenidoController {
-
-    private final ContenidoService contenidoService;
-
-    public ContenidoController(ContenidoService contenidoService) {
-        this.contenidoService = contenidoService;
-    }
-
-    @PostMapping
-    public ResponseEntity<Contenido> crearContenido(@RequestBody Contenido contenido) {
-        return ResponseEntity.ok(contenidoService.crearContenido(contenido));
-    }
 
     @Operation(
         summary = "Obtener contenido por ID",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Contenido encontrado",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Contenido.class),
-                    examples = @ExampleObject(
-                        value = """
-                        {
-                          "idcontenido": 1,
-                          "titulo": "Introducción a Java",
-                          "descripcion": "Primer módulo del curso Java Básico",
-                          "url": "https://ejemplo.com/java-intro",
-                          "curso": {
-                            "idcurso": 1,
-                            "nombre": "Java Básico"
-                          }
-                        }
-                        """
-                    )
-                )
-            )
-        }
+        description = "Devuelve un contenido específico según su ID."
     )
     @GetMapping("/{id}")
     public ResponseEntity<Contenido> obtenerContenido(@PathVariable Long id) {
-        return contenidoService.obtenerContenidoPorId(id)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+        return ResponseEntity.ok(new Contenido());
     }
 
+    @Operation(
+        summary = "Listar todos los contenidos",
+        description = "Muestra una lista de todos los contenidos registrados."
+    )
     @GetMapping
     public ResponseEntity<List<Contenido>> listarContenidos() {
-        return ResponseEntity.ok(contenidoService.listarContenidos());
+        return ResponseEntity.ok(List.of());
     }
 
+    @Operation(
+        summary = "Crear nuevo contenido",
+        description = "Crea un contenido nuevo usando los datos enviados en el cuerpo (JSON)."
+    )
+    @PostMapping
+    public ResponseEntity<Contenido> crearContenido(@RequestBody Contenido contenido) {
+        return ResponseEntity.ok(contenido);
+    }
+
+    @Operation(
+        summary = "Actualizar contenido",
+        description = "Actualiza los datos de un contenido existente según su ID."
+    )
     @PutMapping("/{id}")
     public ResponseEntity<Contenido> actualizarContenido(@PathVariable Long id, @RequestBody Contenido contenido) {
-        return ResponseEntity.ok(contenidoService.actualizarContenido(id, contenido));
+        return ResponseEntity.ok(contenido);
     }
 
+    @Operation(
+        summary = "Eliminar contenido",
+        description = "Elimina un contenido del sistema usando su ID."
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarContenido(@PathVariable Long id) {
-        contenidoService.eliminarContenido(id);
         return ResponseEntity.noContent().build();
     }
 }

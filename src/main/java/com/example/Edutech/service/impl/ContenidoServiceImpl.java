@@ -38,7 +38,7 @@ public class ContenidoServiceImpl implements ContenidoService {
             .map(c -> {
                 c.setTitulo(contenido.getTitulo());
                 c.setDescripcion(contenido.getDescripcion());
-                c.setUrlArchivo(contenido.getUrlArchivo());
+                c.setUrl(contenido.getUrl()); // <--- Cambia esto
                 c.setCurso(contenido.getCurso());
                 return contenidoRepository.save(c);
             })

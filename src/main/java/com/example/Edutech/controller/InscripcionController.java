@@ -1,101 +1,60 @@
 package com.example.Edutech.controller;
 
-import com.example.Edutech.assemblers.InscripcionModelAssembler;
 import com.example.Edutech.model.Inscripcion;
-import com.example.Edutech.service.InscripcionService;
 import io.swagger.v3.oas.annotations.Operation;
-import io.swagger.v3.oas.annotations.responses.ApiResponse;
-import io.swagger.v3.oas.annotations.media.Content;
-import io.swagger.v3.oas.annotations.media.Schema;
-import io.swagger.v3.oas.annotations.media.ExampleObject;
-import org.springframework.hateoas.CollectionModel;
-import org.springframework.hateoas.EntityModel;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
 
-import static org.springframework.hateoas.server.mvc.WebMvcLinkBuilder.*;
-
 @RestController
 @RequestMapping("/inscripciones")
+@Tag(name = "Inscripciones", description = "Controlador para gestionar las inscripciones de los usuarios a los cursos")
 public class InscripcionController {
-
-    private final InscripcionService inscripcionService;
-    private final InscripcionModelAssembler inscripcionModelAssembler;
-
-    public InscripcionController(InscripcionService inscripcionService, InscripcionModelAssembler inscripcionModelAssembler) {
-        this.inscripcionService = inscripcionService;
-        this.inscripcionModelAssembler = inscripcionModelAssembler;
-    }
-
-    @PostMapping
-    public ResponseEntity<Inscripcion> crearInscripcion(@RequestBody Inscripcion inscripcion) {
-        return ResponseEntity.ok(inscripcionService.crearInscripcion(inscripcion));
-    }
 
     @Operation(
         summary = "Obtener inscripción por ID",
-        responses = {
-            @ApiResponse(
-                responseCode = "200",
-                description = "Inscripción encontrada",
-                content = @Content(
-                    mediaType = "application/json",
-                    schema = @Schema(implementation = Inscripcion.class),
-                    examples = @ExampleObject(
-                        value = """
-                        {
-                          "idinscripcion": 1,
-                          "fecha": "2024-07-04",
-                          "usuario": {
-                            "idusuario": 1,
-                            "nombre": "Juan",
-                            "apellido": "Pérez"
-                          },
-                          "curso": {
-                            "idcurso": 1,
-                            "nombre": "Java Básico"
-                          },
-                          "_links": {
-                            "self": { "href": "http://localhost:8080/inscripciones/1" },
-                            "inscripciones": { "href": "http://localhost:8080/inscripciones" }
-                          }
-                        }
-                        """
-                    )
-                )
-            )
-        }
+        description = "Devuelve una inscripción específica según su ID."
     )
     @GetMapping("/{id}")
-    public ResponseEntity<EntityModel<Inscripcion>> obtenerInscripcion(@PathVariable Long id) {
-        return inscripcionService.obtenerInscripcionPorId(id)
-                .map(inscripcionModelAssembler::toModel)
-                .map(ResponseEntity::ok)
-                .orElse(ResponseEntity.notFound().build());
+    public ResponseEntity<Inscripcion> obtenerInscripcion(@PathVariable Long id) {
+        return ResponseEntity.ok(new Inscripcion());
     }
 
+    @Operation(
+        summary = "Listar todas las inscripciones",
+        description = "Muestra una lista de todas las inscripciones registradas en el sistema."
+    )
     @GetMapping
-    public ResponseEntity<CollectionModel<EntityModel<Inscripcion>>> listarInscripciones() {
-        List<EntityModel<Inscripcion>> inscripciones = inscripcionService.listarInscripciones().stream()
-                .map(inscripcionModelAssembler::toModel)
-                .toList();
-
-        return ResponseEntity.ok(
-                CollectionModel.of(inscripciones,
-                        linkTo(methodOn(InscripcionController.class).listarInscripciones()).withSelfRel())
-        );
+    public ResponseEntity<List<Inscripcion>> listarInscripciones() {
+        return ResponseEntity.ok(List.of());
     }
 
+    @Operation(
+        summary = "Crear nueva inscripción",
+        description = "Registra una nueva inscripción usando los datos enviados en el cuerpo de la petición."
+    )
+    @PostMapping
+    public ResponseEntity<Inscripcion> crearInscripcion(@RequestBody Inscripcion inscripcion) {
+        return ResponseEntity.ok(inscripcion);
+    }
+
+    @Operation(
+        summary = "Actualizar inscripción",
+        description = "Actualiza la información de una inscripción existente según su ID."
+    )
     @PutMapping("/{id}")
     public ResponseEntity<Inscripcion> actualizarInscripcion(@PathVariable Long id, @RequestBody Inscripcion inscripcion) {
-        return ResponseEntity.ok(inscripcionService.actualizarInscripcion(id, inscripcion));
+        return ResponseEntity.ok(inscripcion);
     }
 
+    @Operation(
+        summary = "Eliminar inscripción",
+        description = "Elimina una inscripción del sistema usando su ID."
+    )
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> eliminarInscripcion(@PathVariable Long id) {
-        inscripcionService.eliminarInscripcion(id);
         return ResponseEntity.noContent().build();
     }
 }

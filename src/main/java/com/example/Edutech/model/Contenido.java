@@ -6,26 +6,20 @@ import lombok.Data;
 import lombok.NoArgsConstructor;
 
 @Entity
-@Table(name = "contenidos")
+@Table(name = "contenido")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
 public class Contenido {
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long idcontenido;
 
-    @Column(nullable = false)
     private String titulo;
-
-    @Column(nullable = false, length = 10000)
     private String descripcion;
+    private String url;
 
-    @Column(nullable = false)
-    private String urlArchivo; // Puede ser ruta o URL del archivo de contenido
-
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne
     @JoinColumn(name = "idcurso", nullable = false)
     private Curso curso;
 }
